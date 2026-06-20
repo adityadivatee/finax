@@ -290,7 +290,7 @@
     <header>
         <a href="/" class="logo">
             <img src="AppLogo.png" alt="Fige Logo" style="width: 32px; height: 32px; border-radius: 8px;">
-            Fige
+            <span data-i18n="app_name">Fige</span>
         </a>
         <nav>
             <a href="#features" data-i18n="nav_features">Features</a>
@@ -318,7 +318,12 @@
             <div class="hero-chip" data-i18n="hero_chip">✨ Finax Business Now Available</div>
             <h1 data-i18n="hero_title">Manage Your Properties with Zero Stress</h1>
             <p data-i18n="hero_desc">Finax is the ultimate, privacy-first property management solution. Track tenants, automate rent reminders, and analyze your growth—all 100% offline.</p>
-            <a href="#" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 2.5rem;" data-i18n="btn_get_started">Get Started on Google Play</a>
+            <div style="margin-bottom: 3rem;">
+                <a href="#" class="btn-primary" style="font-size: 1.2rem; padding: 1rem 2.5rem;" data-i18n="btn_get_started">Get Started on Google Play</a>
+            </div>
+            <div style="text-align: center; margin-top: 1rem; perspective: 1000px;">
+                <img id="hero-screenshot" src="assets/screenshots/en.jpeg" alt="App Screenshot" style="max-height: 550px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(94, 53, 177, 0.4); border: 1px solid var(--card-border); transform: rotateX(5deg); transition: all 0.5s ease;">
+            </div>
         </section>
 
         <section id="features" class="features">
@@ -576,10 +581,34 @@
             const elements = document.querySelectorAll('[data-i18n]');
             elements.forEach(el => {
                 const key = el.getAttribute('data-i18n');
+                
+                // Special handling for app_name
+                if (key === 'app_name') {
+                    let name = 'Fige';
+                    if (langCode === 'ja') name = 'フィージ (Fige)';
+                    if (langCode === 'ko') name = '피지 (Fige)';
+                    if (langCode === 'ru') name = 'Фидж (Fige)';
+                    el.innerText = name;
+                    return;
+                }
+
                 if (translations[langCode] && translations[langCode][key]) {
                     el.innerText = translations[langCode][key];
                 }
             });
+            
+            // Update screenshot if available, otherwise default to en
+            const screenshot = document.getElementById('hero-screenshot');
+            if (screenshot) {
+                const availableScreenshots = ['en', 'ja', 'ko', 'pt', 'ru'];
+                const imgCode = availableScreenshots.includes(langCode) ? langCode : 'en';
+                screenshot.style.opacity = '0.5';
+                setTimeout(() => {
+                    screenshot.src = `assets/screenshots/${imgCode}.jpeg`;
+                    screenshot.style.opacity = '1';
+                }, 200);
+            }
+
             // Update the HTML lang attribute for accessibility
             document.documentElement.lang = langCode;
         }
